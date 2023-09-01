@@ -1,6 +1,7 @@
 using Persistence;
 using Microsoft.EntityFrameworkCore;
 using API.Extensions;
+using API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,8 @@ builder.Services.AddApplicationServices(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -25,12 +28,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// 'using' keyword tells .NET to clean this scope and everything inside it as soon as it's done being used
+// note: 'using' keyword tells .NET to clean this scope and everything inside it as soon as it's done being used
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 
 try {   
-    // essentially doing the same thing as the "dotnet ef database" command
+    // note: essentially doing the same thing as the "dotnet ef database" command
     // creates db or updates db with the pending migrations
     var context = services.GetRequiredService<DataContext>();
     await context.Database.MigrateAsync();
