@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
+  [AllowAnonymous]
   public class ActivitiesController: BaseApiController
   {
     // note: IAction result specifies http response (i think)
