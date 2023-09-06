@@ -86,7 +86,6 @@ namespace API.Controllers
       // note: inside the context of an api controller we have access to a user object 
       var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
       return CreateUserObject(user);
-
     }
 
     private UserDto CreateUserObject(AppUser user)
