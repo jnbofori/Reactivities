@@ -13,6 +13,8 @@ namespace Persistence
     // note: no need to add a DbSet for our users etc. Identity takes care of all that
     public DbSet<Activity> Activities { get; set; }
     public DbSet<ActivityAttendee> ActivityAttendees { get; set; }
+    public DbSet<Photo> Photos { get; set; }
+
 
     // note: overriding onModelCreating method to add additional configurations
     // will allow us to have access to our entity configurations

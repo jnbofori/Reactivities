@@ -7,6 +7,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Application.Interfaces;
 using Infrastructure.Security;
+using Infrastructure.Photos;
 
 namespace API.Extensions
 {
@@ -40,6 +41,9 @@ namespace API.Extensions
           services.AddHttpContextAccessor();
           // note: makes it available to be injected into our Application handlers
           services.AddScoped<IUserAccessor, UserAccessor>();
+          services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+
+          services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
 
           return services;
         }
