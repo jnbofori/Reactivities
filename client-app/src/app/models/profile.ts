@@ -5,14 +5,21 @@ export interface IProfile {
   displayName: string;
   image?: string;
   bio?: string;
-  photos?: Photo[]
+  followersCount: number;
+  followingCount: number;
+  following: boolean;
+  photos?: Photo[];
 }
 
+// note: this was done like this because of a possible linting issue
 export class Profile implements IProfile {
   username: string;
   displayName: string;
   image?: string;
   bio?: string;
+  followersCount= 0;
+  followingCount= 0;
+  following = false;
   photos?: Photo[]
   
   constructor(user: User) {
