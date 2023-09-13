@@ -10,9 +10,12 @@ namespace Application.Activities
 {
   public class List
   {
-    public class Query : IRequest<Result<List<ActivityDto>>> { }
+    public class Query : IRequest<Result<PagedList<ActivityDto>>>
+    {
+      public ActivityParams Params { get; set; }
+    }
 
-    public class Handler : IRequestHandler<Query, Result<List<ActivityDto>>>
+    public class Handler : IRequestHandler<Query, Result<PagedList<ActivityDto>>>
     {
       private readonly DataContext _context;
       private readonly IMapper _mapper;
@@ -27,15 +30,32 @@ namespace Application.Activities
 
       // note: what cancellationToken does is, if user cancels request before it is completed,
       // it should stop the process
-      public async Task<Result<List<ActivityDto>>> Handle(Query request, CancellationToken cancellationToken)
+      public async Task<Result<PagedList<ActivityDto>>> Handle(Query request, CancellationToken cancellationToken)
       {
-        var activities = await _context.Activities
+        var query = _context.Activities
+          .Where(d => d.Date >= request.Params.StartDate)
+          .OrderBy(d => d.Date)
           .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider, new { currentUsername = _userAccessor.GetUsername() })
-          .ToListAsync(cancellationToken);
-        // note: query above creates an infinite loop
+          .AsQueryable();
+        // note: query above created an infinite loop
         // Activities have Attendees which also relate to AppUsers and AppUsers have Activities 
         // and so on and so forth. Hence the autoMapper to map to new object/object type
-        return Result<List<ActivityDto>>.Success(activities);
+
+        if (request.Params.IsGoing && !request.Params.IsHost)
+        {
+          query = query.Where(activity => activity.Attendees.Any(a => a.Username == _userAccessor.GetUsername()));
+        }
+
+        if (request.Params.IsHost && !request.Params.IsGoing)
+        {
+          // note: at this point, because of the projection above we're working with an activityDto
+          // which has 'HostUsername' property
+          query = query.Where(activity => activity.HostUsername == _userAccessor.GetUsername());
+        }
+
+        return Result<PagedList<ActivityDto>>.Success(
+          await PagedList<ActivityDto>.CreateAsync(query, request.Params.PageNumber, request.Params.PageSize)
+        );
       }
     }
   }

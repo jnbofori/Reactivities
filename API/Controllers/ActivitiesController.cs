@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using MediatR;
 using Application.Activities;
 using Microsoft.AspNetCore.Authorization;
+using Application.Core;
 
 namespace API.Controllers
 {
@@ -12,9 +13,9 @@ namespace API.Controllers
   {
     // note: IAction result specifies http response (i think)
     [HttpGet]
-    public async Task<IActionResult> GetActivities() {
+    public async Task<IActionResult> GetActivities([FromQuery]ActivityParams activityParams) {
       // note: this sends query to mediator handler
-      return HandleResult(await Mediator.Send(new List.Query()));
+      return HandlePagedResult(await Mediator.Send(new List.Query{Params = activityParams}));
     }
 
     [HttpGet("{id}")]
