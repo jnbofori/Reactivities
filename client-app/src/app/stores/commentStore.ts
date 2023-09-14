@@ -25,8 +25,7 @@ export default class CommentStore {
       this.hubConnection.on('LoadComments', (comments: ChatComment[]) => {
         runInAction(() => {
           comments.forEach(comment => {
-            // note: appending 'Z' to date to make it UTC so that the browser knows to make it local time
-            comment.createdAt = new Date(comment.createdAt + 'Z');
+            comment.createdAt = new Date(comment.createdAt);
           })
           this.comments = comments
         });

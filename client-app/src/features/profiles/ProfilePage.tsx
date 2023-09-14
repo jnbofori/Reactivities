@@ -4,7 +4,7 @@ import ProfileHeader from "./ProfileHeader";
 import ProfileContent from "./ProfileContent";
 import { useStore } from "../../app/stores/store";
 import { useParams } from "react-router-dom";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 
 export default observer(function ProfilePage() {

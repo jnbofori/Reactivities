@@ -9,3 +9,6 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+// note: these are type definitions for the env variable
+// to avoid possible errors showing up

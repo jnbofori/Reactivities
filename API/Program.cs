@@ -39,8 +39,18 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication(); // note: authentication has to come first
 app.UseAuthorization();
 
+// note: this is telling the api to serve our static files (react app)
+// its job is to look inside the 'wwwroot' folder and fish out anything
+// called 'index.html/index.htm', and that's what it will use and serve 
+// from server (kestrel)
+app.UseDefaultFiles();
+// to serve content inside 'wwwroot' (thats the default folder)
+// could be configured to use some other folder name
+app.UseStaticFiles();
+
 app.MapControllers();
 app.MapHub<ChatHub>("/chat");
+app.MapFallbackToController("Index", "Fallback");
 
 // note: 'using' keyword tells .NET to clean this scope and everything inside it as soon as it's done being used
 using var scope = app.Services.CreateScope();
